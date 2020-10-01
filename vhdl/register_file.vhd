@@ -16,21 +16,23 @@ entity register_file is
 end register_file;
 
 architecture synth of register_file is
-type reg_type is array (0 to 31) of std_logic_vector(31 downto 0);
-signal reg: reg_type;
+	type reg_type is array (0 to 31) of std_logic_vector(31 downto 0);
+	signal reg: reg_type;
 
 begin
 
-a <= reg(to_integer(unsigned(aa)));
-b <= reg(to_integer(unsigned(ab)));
-
-process(clk) is
-begin
-	if(rising_edge(clk)) then 
-		if(wren = '1') then 
-			reg(to_integer(unsigned(aw))) <= wrdata;
+	a <= reg(to_integer(unsigned(aa)));
+	b <= reg(to_integer(unsigned(ab)));
+	
+	process(clk) is
+	begin
+		if(rising_edge(clk)) then 
+			if (wren = '1') then 
+				if not(unsigned(aw) = to_unsigned(0, 5)) then
+					reg(to_integer(unsigned(aw))) <= wrdata;
+				end if;
+			end if;
 		end if;
-	end if;
-end process;
-
+		reg(0) <= (others => '0');
+	end process;
 end synth;

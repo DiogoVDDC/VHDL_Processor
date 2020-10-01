@@ -10,8 +10,6 @@ architecture bench of tb_ALU is
     signal op      : std_logic_vector(5 downto 0);
 
 begin
-
-
     alu_0 : ENTITY work.alu(bdf_type) PORT MAP(
             a  => a,
             b  => b,
@@ -76,45 +74,11 @@ begin
                             -- sub
                             when "001" => expected := std_logic_vector(signed(a) - signed(b));
                             -- comparator
-                            when "011" => if(op(2 downto 0) = "001") then 
-						if(signed(a) <= signed(b)) then
-					       		expected := "00000000000000000000000000000001";
-					  	else
-					       		expected := "00000000000000000000000000000000";
-             				  	end if;
-					  elsif (op(2 downto 0) = "010") then
-						if(signed(a) > signed(b)) then
-					       		expected := "00000000000000000000000000000001";
-					  	else
-					       		expected := "00000000000000000000000000000000";
-             				  	end if;
-					  elsif (op(2 downto 0) = "011") then
-						if(signed(a) /= signed(b)) then 
-					       		expected := "00000000000000000000000000000001";
-					  	else
-					       		expected := "00000000000000000000000000000000";
-             				  	end if;
-					  elsif (op(2 downto 0) = "100") then
-						if(signed(a) = signed(b)) then
-					       		expected := "00000000000000000000000000000001";
-					  	else	
-					       		expected := "00000000000000000000000000000000";
-             				  	end if;
-					  elsif (op(2 downto 0) = "101") then
-						if(unsigned(a) <= unsigned(b)) then
-					       		expected := "00000000000000000000000000000001";
-					  	else
-					       		expected := "00000000000000000000000000000000";
-             				  	end if;
-					  elsif (op(2 downto 0) = "110") then
-						if(unsigned(a) > unsigned(b)) then
-					       		expected := "00000000000000000000000000000001";
-					  	else
-					       		expected := "00000000000000000000000000000000";
-             				  	end if;
-					  end if;
- 
-                           
+                            when "011" =>
+---------------------------------------MODIFY HERE-------------------------------------------------------------
+				ASSERT FALSE
+					REPORT "Replace this ASSERT with the code to test the comparator"
+                			SEVERITY ERROR;
 ---------------------------------------END MODIFY--------------------------------------------------------------
                             -- "010" is not valid -> ignore
                             -- logical unit
@@ -155,7 +119,7 @@ begin
                                 REPORT "Incorrect Behavior"
                                 SEVERITY ERROR;
                             success := FALSE;
-                            --wait;       -- to stop after the first error.
+                            wait;       -- to stop after the first error.
                         end if;
                     end loop;           -- op_low_b
                 end loop;               -- op_b

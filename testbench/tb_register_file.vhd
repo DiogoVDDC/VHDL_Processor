@@ -61,20 +61,26 @@ begin
             wrdata <= std_logic_vector(to_unsigned(i + 1, 32));
             wait for CLK_PERIOD;
         end loop;
-
+	wren<= '0';
         -- read in the register file
         -- INSERT CODE THAT READS THE REGISTER FILE HERE
-	wren<= '0';
+
 	for i in 0 to 31 loop		
 		aa <= std_logic_vector(to_unsigned(i, 5));	
-
-		if (a /= std_logic_vector(to_unsigned(i + 1, 32))) then
-                            ASSERT FALSE
-                                REPORT "Incorrect Behavior"
-                                SEVERITY ERROR;
-                end if;
+		
+		wait for 5 ns;
+		if (i = 0) then 
+			assert(a = std_logic_vector(to_unsigned(0, 32)))
+			report "Error: address zero should be bound to value zero, current value: " &
+				integer'image(to_integer(unsigned(a)))
+			severity error;
+		else
+			assert (a = std_logic_vector(to_unsigned(i + 1, 32))) 
+                	report "Incorrect Behavior, a = " & integer'image(to_integer(unsigned(a)))
+                	severity error;
+		end if;
 	
-		wait for TIME_DELTA;
+		wait for CLK_PERIOD;
 	end loop;
 
         stop <= '1';
