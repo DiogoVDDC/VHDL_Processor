@@ -14,33 +14,36 @@ entity RAM is
 end RAM;
 
 architecture synth of RAM is
-type memory_type is array (0 to 999) of std_logic_vector(31 downto 0); -- (4KB and words of 4B = 32 bit)
+type memory_type is array (0 to 1000) of std_logic_vector(32 downto 0); -- (4KB and words of 4B = 32 bit)
 signal memory: memory_type;
 signal s_read, s_cs    :   std_logic;
-signal s_rd_data : std_logic_vector(31 downto 0));
+signal s_rd_data : std_logic_vector(31 downto 0);
 
 begin
+
+
+rddata <= s_rd_data when s_read = '1' and s_cs <= '1';
 
 process(clk) is
 begin
 	if(rising_edge(clk)) then 
 		-- read 
-		if(read = '1' and cs = '1') then 
+		if(read = '1' and cs = '1') then 					
+			s_rd_data <= memory(to_integer(unsigned(address)));
 			s_read <= '1';
 			s_cs <= '1';
-			s_rd_data <= memory(to_integer(unsigned()))
 		else 
 			s_read <= '0';
 			s_cs <= '0';
+		end if;
 
 		-- write 
 		if(write = '1' and cs = '1') then 
 			memory(to_integer(unsigned(address))) <= wrdata;
-
+		end if;
 	end if;
 end process;
 
-rd_data <= s_rd_data when s_read = '1' and s_cs <= '1'
 
 
 end synth;
