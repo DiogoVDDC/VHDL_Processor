@@ -16,9 +16,8 @@ end RAM;
 architecture synth of RAM is
 	type memory_type is array (0 to 1023) of std_logic_vector(31 downto 0); -- (4KB and words of 4B = 32 bit)
 	signal memory: memory_type;
-	signal s_read, s_cs    :   std_logic;
-	signal s_rd_data : std_logic_vector(31 downto 0);
-	signal s_address : std_logic_vector(9 downto 0);
+	signal s_read, s_cs    :   std_logic := '0';
+	signal s_address : std_logic_vector(9 downto 0) := (others => '0');
 
 begin
 
