@@ -21,21 +21,20 @@ signal current_addr : unsigned(31 downto 0);
 
 begin
 
-addr(31 downto 1) <= std_logic_vector(current_addr(31 downto 1));
-addr(1 downto 0) <= "00";
+	addr(31 downto 0) <= std_logic_vector(current_addr(31 downto 2) & "00");
 
-clock: process(clk)
-begin
-	if(rising_edge(clk)) then
-		if(reset_n = '0') then 
-			addr <= (OTHERS => '0');
-		end if;		
-
-		if(en = '1') then
-			current_addr <= current_addr + 4;
+	clock: process(clk, reset_n)
+	begin	
+		if (reset_n = '0') then 
+			current_addr <= (others => '0');
+		elsif(rising_edge(clk)) then
+			if(reset_n = '0') then 
+				current_addr <= (OTHERS => '0');
+			elsif(en = '1') then
+				current_addr <= current_addr + 4;
+			end if;
 		end if;
-	end if;
-end process;
+	end process;
 
 
 end synth;

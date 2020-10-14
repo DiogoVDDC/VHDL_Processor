@@ -12,7 +12,6 @@ end mux2x32;
 
 architecture synth of mux2x32 is
 begin
-
-o <= i0 when sel = '0' else i1 when sel = '1';
-
+	o <=  	i1 when sel = '1' else
+		i0 when sel = '0';
 end synth;
