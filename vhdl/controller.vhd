@@ -39,129 +39,215 @@ end controller;
 
 architecture synth of controller is
 
-	type states is (FETCH1, FETCH2, DECODE, R_OP, STORE, BREAK, LOAD1, LOAD2, I_OP);
+	type states is (FETCH1, FETCH2, DECODE, R_OP, STORE, BREAK, LOAD1, LOAD2, I_OP, UI_OP, BRANCH, CALL, CALLR, JMP, JMPI);
 	signal state, nextState : states;
 begin
 
-	pc_add_imm <= '0';
-	pc_sel_imm <= '0';
- 	pc_sel_a <= '0';
-	branch_op <= '0';
-	imm_signed <= '0';
-	sel_pc <= '0';
-	sel_ra <= '0';
-
-	process(state) is
-	begin
-		if state = DECODE then
-	end process;
-
 	process(clk, reset_n) is
 	begin
-		if (reset_n = '0') then
-			nextState <= FETCH1;
-		end if;
-		
-		if rising_edge(clk) then
-			state <= nextState;
-					
-				when others =>
-			end case;
-			case nextState is
+		if reset_n = '0' then 
+			state <= FETCH1;
+		elsif rising_edge(clk) then
+			case state is 
 				when FETCH1 =>
-					read <= '1';
-					nextState <= FETCH2;
+					state <= FETCH2;
 				when FETCH2 =>
-					nextState <= DECODE;
+					state <= DECODE;
 				when DECODE =>
-					
-				when I_OP =>
-					nextState <= FETCH1;
+					case op is
+						when "111010" => -- op = 3A
+							case opx is
+								when "001110" => -- opx = 0E
+									state <= R_OP; 
+								when "011011" => -- opx = 1B
+									state <= R_OP;
+								when "110100" => -- opx = 34
+									state <= BREAK;
+								when "011101" => -- opx = 1D
+									state <= CALLR;
+								when "000101" => -- opx = 05
+									state <= JMP;
+								when "001101" => -- opx = 0D
+									state <= JMP;
+								when "000110" => -- opx = 06
+									state <= R_OP;
+								when "001000" => -- opx = 08
+									state <= R_OP;
+								when "110001" => -- opx = 31	
+									state <= R_OP; 
+								when "111001" => -- opx = 39
+									state <= R_OP;
+								when "010000" => -- opx = 10
+									state <= R_OP;
+								when "010110" => -- opx = 16
+									state <= R_OP;
+								when "011110" => -- opx = 1E
+									state <= R_OP;
+								when "010011" => -- opx = 13
+									state <= R_OP;
+								when "111011" => -- opx = 3B
+									state <= R_OP;
+								when "000011" => -- opx = 03
+									state <= R_OP;
+								when "001011" => -- opx = 0B
+									state <= R_OP;  
+								when "011000" => -- opx = 18
+									state <= R_OP;
+								when "100000" => -- opx = 20
+									state <= R_OP;
+								when "101000" => -- opx = 28
+									state <= R_OP;
+								when others =>
+									state <= BREAK;
+							end case;
+						when "000100" => -- op = 04
+							state <= I_OP;
+						when "010111" => -- op = 17
+							state <= LOAD1;
+						when "010101" => -- op  = 15
+							state <= STORE;
+						when "001110" => -- op = 0E
+							state <= BRANCH;
+						when "010110" => -- op = 16
+							state <= BRANCH;
+						when "011110" => -- op = 1E
+							state <= BRANCH;
+						when "100110" => -- op = 26
+							state <= BRANCH;
+						when "101110" => -- op = 2E
+							state <= BRANCH;
+						when "110110" => -- op = 36
+							state <= BRANCH;
+						when "000000" => -- op = 00
+							state <= CALL;
+						when "000001" => -- op = 01
+							state <= JMPI;
+						when "001100" => -- op = 0C
+						 	state <= UI_OP;
+						when "010100" => -- op = 14
+							state <= UI_OP; 
+						when "011100" => -- op = 1C			
+							state <= UI_OP; 
+						when "001000" => -- op = 08
+							state <= I_OP; 
+						when "010000" => -- op = 10
+							state <= I_OP; 
+						when "011000" => -- op = 18
+							state <= I_OP; 
+						when "100000" => -- op = 20
+							state <= I_OP; 
+						when "101000" => -- op = 28
+							state <= UI_OP; 
+						when "110000" => -- op = 30
+							state <= UI_OP; 
+						
+						when others =>	state <= BREAK;
+					end case;	
+
+				when I_OP =>	
+					state <= FETCH1;
+				when UI_OP =>
+					state <= FETCH1;					
 				when R_OP =>
-					nextState <= FETCH1;
-				when LOAD1 =>
-					nextState <= LOAD2;
-				when LOAD2 =>
-					nextState <= FETCH1;
+					state <= FETCH1;
 				when STORE =>
-					nextState <= FETCH1;
+					state <= FETCH1;
 				when BREAK =>
-					nextState <= BREAK;
-				when others => 
-					nextState <= BREAK;
+					state <= BREAK;
+				when LOAD1 =>
+					state <= LOAD2;
+				when LOAD2 =>
+					state <= FETCH1;
+				when BRANCH =>
+					state <= FETCH1;
+				when CALL =>
+					state <= FETCH1;
+				when CALLR =>
+					state <= FETCH1;
+				when JMP =>
+					state <= FETCH1;
+				when JMPI =>
+					state <= FETCH1;
+				when others =>
+					state <= BREAK;
 			end case;
 		end if;
-			
---			state <= nextState;
---			if nextState = FETCH1 then
---				ir_en <= '1';
---				read <= '1';
---				nextState <= FETCH2;
---			elsif nextState = FETCH2 then
---				nextState <= DECODE;
---			elsif nextState = DECODE then
+	end process;
 
---			elsif nextState = I_OP then
---				nextState <= FETCH1;
---			elsif nextState = R_OP then
---				nextState <= FETCH1;
---			elsif nextState = LOAD1 then
---				nextState <= LOAD2;
---			elsif nextState = LOAD2 then
---				nextState <= FETCH1;
---			elsif nextState = STORE then
---				nextState <= FETCH1;
---			elsif nextState = BREAK then 
---				nextState <= BREAK;
---			end if;
---		end if;
-	end process;	
-	
-	pc_en <= '1' when state = FETCH2 else '0';
+	read <= '1' when state = FETCH1 or state = FETCH2 or state = LOAD1 else '0';
+	write <= '1' when state = STORE else '0';
 	ir_en <= '1' when state = FETCH2 else '0';
-
-	sel_mem <= '1' when state = LOAD2 else '0';
-	sel_addr <= '1' when state = LOAD1 or state = STORE else '0';
-	rf_wren <= '1' when state = R_OP else '0';
-
-	sel_b <= '1' when state = R_OP else '0';
+	imm_signed <= '1' when state = STORE or state = I_OP or state = LOAD1 else '0';
+	sel_b <= '1' when state = R_OP or state = BRANCH else '0';
 	sel_rC <= '1' when state = R_OP else '0';
+	sel_ra <= '1' when state = CALL or state = CALLR else '0';
+	sel_pc <= '1' when state = CALL or state = CALLR else '0';
+	rf_wren <= '1' when state = R_OP or state = LOAD2 or state = I_OP or state = CALL or state = CALLR else '0';
+	
+	pc_en <= '1' when state = FETCH2 or state = CALL or state = CALLR or state = JMP or state = JMPI else '0';
+	pc_sel_imm <= '1' when state = CALL or state = JMPI else '0';
+ 	pc_sel_a <= '1' when state = CALLR or state = JMP else '0';
+	sel_addr <= '1' when state = LOAD1 or state = STORE else '0';
+	
+	sel_mem <= '1' when state = LOAD2 else '0';
 
-	--read <= '1' when state = LOAD1 or state = LOAD2 or state = FETCH1 else
-	--	'0';
-	write <= '1' when state = STORE else
-		'0';
+	branch_op <= '1' when state = BRANCH else '0';
+	pc_add_imm <= '1' when state = BRANCH else '0';
 
 	process(op, opx) is
 	begin
-		if op = "111010" then
-			if opx = "001110" then
-				op_alu <= "100001";
-			elsif opx = "011011" then
-				op_alu <= "110011";
-			end if;
-		elsif op = "000100" then
-			op_alu <= "000000";
-		elsif op = "010111" or op = "010101" then
-			op_alu <= "000000";
-		else 
-			op_alu <= "000000";
-		end if;
+		case op is
+			when "111010" =>
+				case opx is
+					when "001110" =>
+						op_alu <= "100001";
+					when "011011" =>
+						op_alu <= "110011";
+					when "000110" =>
+						op_alu <= "100000";
+					when "001000" =>
+						op_alu <= "011001";
+					when "000011" =>
+						op_alu <= "110000";
+					when "001011" =>
+						op_alu <= "110001";
+					when "010000" => -- opx = 10
+						op_alu <= "011010";
+					when "010011" => -- opx = 13
+						op_alu <= "110010";
+					when "010110" => -- opx = 16
+						op_alu <= "100010";
+					when "011000" => -- opx = 18
+						op_alu <= "011011";
+					when "011110" => -- opx = 1E
+						op_alu <= "100011";
+					when "100000" => -- opx = 20
+						op_alu <= "011100";
+					when "101000" => -- opx = 28
+						op_alu <= "011101";
+					when others =>
+						op_alu <= "000000";
+				end case;
+			when "000100" =>
+				op_alu <= "000000";
+			when "010111" =>
+				op_alu <= "000000";
+			when "010101" =>			
+				op_alu <= "000000";
+			when "001110" =>
+				op_alu <= "011001";
+			when "010110" =>
+				op_alu <= "011010";
+			when "011110" =>
+				op_alu <= "011011";
+			when "100110" =>
+				op_alu <= "011100";
+			when "101110" =>
+				op_alu <= "011101";
+			when "110110" =>
+				op_alu <= "011110";
+			when others =>	
+				op_alu <= "000000";
+		end case;
 	end process;
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 end synth;
