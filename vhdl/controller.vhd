@@ -39,7 +39,7 @@ end controller;
 
 architecture synth of controller is
 
-	type states is (FETCH1, FETCH2, DECODE, R_OP, STORE, BREAK, LOAD1, LOAD2, I_OP, UI_OP, BRANCH, CALL, CALLR, JMP, JMPI);
+	type states is (FETCH1, FETCH2, DECODE, R_OP, STORE, BREAK, LOAD1, LOAD2, I_OP, UI_OP, RI_OP, BRANCH, CALL, CALLR, JMP, JMPI);
 	signal state, nextState : states;
 begin
 
@@ -97,6 +97,16 @@ begin
 									state <= R_OP;
 								when "101000" => -- opx = 28
 									state <= R_OP;
+								when "110000" => -- opx = 30
+									state <= R_OP;
+								when "000010" => -- opx = 02
+									state <= RI_OP;
+								when "010010" => -- opx = 12
+									state <= RI_OP;
+								when "011010" => -- opx = 1A
+									state <= RI_OP;
+								when "111010" => -- opx = 3A
+									state <= RI_OP;
 								when others =>
 									state <= BREAK;
 							end case;
@@ -140,7 +150,8 @@ begin
 							state <= UI_OP; 
 						when "110000" => -- op = 30
 							state <= UI_OP; 
-						
+						when "000110" => -- op = 06
+							state <= BRANCH;
 						when others =>	state <= BREAK;
 					end case;	
 
@@ -168,6 +179,8 @@ begin
 					state <= FETCH1;
 				when JMPI =>
 					state <= FETCH1;
+				when RI_OP =>
+					state <= FETCH1;
 				when others =>
 					state <= BREAK;
 			end case;
@@ -179,10 +192,10 @@ begin
 	ir_en <= '1' when state = FETCH2 else '0';
 	imm_signed <= '1' when state = STORE or state = I_OP or state = LOAD1 else '0';
 	sel_b <= '1' when state = R_OP or state = BRANCH else '0';
-	sel_rC <= '1' when state = R_OP else '0';
+	sel_rC <= '1' when state = R_OP or state = RI_OP else '0';
 	sel_ra <= '1' when state = CALL or state = CALLR else '0';
 	sel_pc <= '1' when state = CALL or state = CALLR else '0';
-	rf_wren <= '1' when state = R_OP or state = LOAD2 or state = I_OP or state = CALL or state = CALLR else '0';
+	rf_wren <= '1' when state = R_OP or state = LOAD2 or state = I_OP or state = CALL or state = CALLR or state = RI_OP or state = UI_OP else '0';
 	
 	pc_en <= '1' when state = FETCH2 or state = CALL or state = CALLR or state = JMP or state = JMPI else '0';
 	pc_sel_imm <= '1' when state = CALL or state = JMPI else '0';
@@ -225,26 +238,58 @@ begin
 						op_alu <= "011100";
 					when "101000" => -- opx = 28
 						op_alu <= "011101";
+					when "110000" => -- opx = 30
+						op_alu <= "011110";
+					when "111001" => -- opx = 39
+						op_alu <= "001000";
+					when "111011" => -- opx = 3B
+						op_alu <= "110111";
+					when "000010" => -- opx = =02
+						op_alu <= "110000";
+					when "010010" => -- opx = 12
+						op_alu <= "110010";
+					when "011010" => -- opx = 1A
+						op_alu <= "110011";
+					when "111010" => -- opx = 3A
+						op_alu <= "110111";
 					when others =>
 						op_alu <= "000000";
 				end case;
-			when "000100" =>
+			when "000100" => -- op = 4
 				op_alu <= "000000";
-			when "010111" =>
+			when "010111" => -- op = 17
 				op_alu <= "000000";
-			when "010101" =>			
+			when "010101" => -- op = 15		
 				op_alu <= "000000";
-			when "001110" =>
+			when "001110" => -- op = 0E
 				op_alu <= "011001";
-			when "010110" =>
+			when "010110" => -- op = 16
 				op_alu <= "011010";
-			when "011110" =>
+			when "011110" => -- op = 1E
 				op_alu <= "011011";
-			when "100110" =>
+			when "100110" => -- op = 26
 				op_alu <= "011100";
-			when "101110" =>
+			when "101110" => -- op = 2E
 				op_alu <= "011101";
-			when "110110" =>
+			when "110110" => -- op = 36
+				op_alu <= "011110";
+			when "001000" => -- op = 08
+				op_alu <= "011001";
+			when "010000" => -- op = 10
+				op_alu <= "011010";
+			when "011000" => -- op = 18
+				op_alu <= "011011";
+			when "100000" => -- op = 20 
+				op_alu <= "011100";
+			when "001100" => -- op = 0C
+				op_alu <= "100001";
+			when "010100" => -- op = 14
+				op_alu <= "100010";
+			when "011100" => -- op = 1C
+				op_alu <= "100011";
+			when "101000" => -- op = 28
+				op_alu <= "011101";
+			when "110000" => -- op = 30
 				op_alu <= "011110";
 			when others =>	
 				op_alu <= "000000";

@@ -28,10 +28,16 @@ begin
 		if (reset_n = '0') then 
 			current_addr <= (others => '0');
 		elsif(rising_edge(clk)) then
-			if(reset_n = '0') then 
-				current_addr <= (OTHERS => '0');
-			elsif(en = '1') then
-				current_addr <= current_addr + 4;
+			if(en = '1') then
+				if (add_imm = '1') then
+					current_addr <= unsigned(signed(current_addr) + signed(imm));			
+				elsif (sel_imm = '1') then
+					current_addr <= unsigned("00000000000000" & imm & "00");
+				elsif (sel_a = '1') then
+					current_addr <= unsigned("0000000000000000" & a);
+				else
+					current_addr <= current_addr + 4;
+				end if;
 			end if;
 		end if;
 	end process;
