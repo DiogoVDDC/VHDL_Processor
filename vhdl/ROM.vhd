@@ -19,7 +19,7 @@ architecture synth of ROM is
 		q	: out std_logic_vector (31 downto 0));
 	end component ROM_block;
 
-	signal s_q 	    : std_logic_vector(31 downto 0);
+	signal s_q 	    : std_logic_vector(31 downto 0):= (others => '0');
 	signal s_read, s_cs : std_logic := '0';
 
 begin

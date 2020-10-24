@@ -17,7 +17,7 @@ end register_file;
 
 architecture synth of register_file is
 	type reg_type is array (0 to 31) of std_logic_vector(31 downto 0);
-	signal reg: reg_type;
+	signal reg: reg_type:= (others => (others =>'0'));
 
 begin
 
