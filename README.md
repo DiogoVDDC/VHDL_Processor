@@ -29,4 +29,4 @@ Controller.vhd should be able to decode the instruction according to this table:
 
 ![alt text](https://github.com/DiogoVDDC/VHDL_Processor/blob/master/image_2021-11-29_205028.png)
 
-PC.vhd handles the program counter 
+PC.vhd handles the program counter, changing the address each clock cycle.
