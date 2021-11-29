@@ -24,3 +24,5 @@ There exist multiple different execute stages depending on the instruction type:
 The main VHDL file follow the following structure:
 
 ![alt text](https://github.com/DiogoVDDC/VHDL_Processor/blob/master/CPU_Main_design.png)
+
+Controller.vhd: uses the opx code the  
