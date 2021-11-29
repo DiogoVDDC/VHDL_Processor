@@ -1,5 +1,7 @@
 # VHDL Processor
 
+Done by Diogo Valdivieso Damasio Da Costa & Théo Houle
+
 Implemented basic CPU (not pipelined) to be programmed on FPGA board. 
 
 The CPU followed the following finite state machine:
