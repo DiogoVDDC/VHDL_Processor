@@ -25,4 +25,8 @@ The main VHDL file follow the following structure:
 
 ![alt text](https://github.com/DiogoVDDC/VHDL_Processor/blob/master/CPU_Main_design.png)
 
-Controller.vhd: uses the opx code the  
+Controller.vhd should be able to decode the instruction according to this table:
+
+![alt text](https://github.com/DiogoVDDC/VHDL_Processor/blob/master/image_2021-11-29_205028.png)
+
+PC.vhd handles the program counter 
