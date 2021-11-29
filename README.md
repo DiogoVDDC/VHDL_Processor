@@ -1,6 +1,6 @@
 # VHDL Processor
 
-Implemented CPU to be programmed on FPGA board. 
+Implemented basic CPU (not pipelined) to be programmed on FPGA board. 
 
 The CPU followed the following finite state machine:
 
@@ -18,4 +18,6 @@ There exist multiple different execute stages depending on the instruction type:
 4) R-OP: For a R-type instruction (instruction which uses only registers value as it's operands)
 5) BREAK: Simply stops the CPU
 
+The main VHDL file follow the following structure:
 
+![alt text](https://github.com/DiogoVDDC/VHDL_Processor/blob/master/CPU_Main_design.png)
