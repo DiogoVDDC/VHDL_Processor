@@ -12,8 +12,10 @@ During DECODE, the CPU identifies the instruction and determine the next state.
 
 There exist multiple different execute stages depending on the instruction type:
 
-LOAD: For a load instruction
-STORE: For a store instruction
-I-OP: For a I-type instruction (instruction which uses an immediate value as one of it's operands)
-R-OP: For a R-type instruction (instruction which uses only registers value as it's operands)
-BREAK: Simply stops the CPU
+1) LOAD: For a load instruction
+2) STORE: For a store instruction
+3) I-OP: For a I-type instruction (instruction which uses an immediate value as one of it's operands)
+4) R-OP: For a R-type instruction (instruction which uses only registers value as it's operands)
+5) BREAK: Simply stops the CPU
+
+
